@@ -10,7 +10,7 @@
 [![Infra](https://img.shields.io/badge/infra-Docker%20Compose-blue)]()
 [![Status](https://img.shields.io/badge/status-work%20in%20progress-yellow)]()
 
-> 🚧 **Work in progress.** The architecture, database schema and workflow specifications are in place, and the workflows are being implemented and tested sprint by sprint. See the [roadmap](#roadmap) for the current status.
+> 🚧 **Work in progress.** The architecture, database schema and workflow specifications are in place, and the workflows are being implemented and tested sprint by sprint. See [Status](#status) for what is built so far.
 
 ---
 
@@ -62,7 +62,7 @@ C --> F
 
 ---
 
-## Architecture in numbers
+## Architecture in numbers (planned)
 
 | Component | Count |
 |---|---|
@@ -94,8 +94,10 @@ cp .env.example .env
 
 ### 2. Start the infrastructure
 
+The `api` service has no code yet (see [Status](#status)), so start the other services:
+
 ```bash
-docker-compose up -d
+docker-compose up -d postgres redis n8n n8n-worker-1 n8n-worker-2 prometheus postgres-exporter redis-exporter grafana metabase
 ```
 
 ### 3. Initialize the database
@@ -124,7 +126,7 @@ docker-compose up -d
 | Grafana | http://localhost:3000 | admin / `.env GRAFANA_ADMIN_PASSWORD` |
 | Metabase | http://localhost:3001 | set up on first access |
 | Prometheus | http://localhost:9090 | no authentication |
-| API WCIC | http://localhost:8080/api/v1 | `X-API-Key` header |
+| API WCIC (not built yet) | http://localhost:8080/api/v1 | `X-API-Key` header |
 
 ---
 
@@ -151,6 +153,8 @@ world-cup-intelligence-center/
 
 ## Documentation
 
+The documents in `docs/` are written in Portuguese.
+
 | Document | Description |
 |---|---|
 | [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Full architecture overview |
@@ -174,15 +178,25 @@ world-cup-intelligence-center/
 
 ---
 
-## Roadmap
+## Status
 
-- [x] Sprint 0 — Base structure and documentation
-- [x] Sprint 1 — Database schema
-- [ ] Sprint 2 — WF-01 Match Collector + WF-08 Dashboard Sync
-- [ ] Sprint 3 — WF-02 Live Events + WF-07 Notification Hub
-- [ ] Sprint 4 — WF-03 News Intelligence + WF-04 Sentiment
-- [ ] Sprint 5 — WF-05 AI Predictions + WF-11 Accuracy Tracker
-- [ ] Sprint 6 — Full observability (Grafana + Prometheus)
+The project is not finished. This is what the repository contains today, by sprint:
+
+| Sprint | Scope | In the repository |
+|---|---|---|
+| 0 | Base structure and documentation | ✅ Architecture document, ADRs, workflow specifications ([`n8n/specs`](./n8n/specs)) |
+| 1 | Database schema | ✅ 8 versioned migrations (schema, indexes, views, TimescaleDB hypertables) and seeds for teams and venues |
+| 2 | WF-01 Match Collector + WF-08 Dashboard Sync | WF-01 built · WF-08 not started |
+| 3 | WF-02 Live Events + WF-07 Notification Hub | Both workflows built, with a test script for live events |
+| 4 | WF-03 News Intelligence + WF-04 Sentiment | Both workflows built, with test scripts and a Grafana dashboard for news intelligence |
+| 5 | WF-05 AI Predictions + WF-11 Accuracy Tracker | Both workflows built, with a test script for the prediction engine |
+| 6 | Full observability (Grafana + Prometheus) | Prometheus configuration and alert rules in place; remaining dashboards not built |
+
+Still missing for a first complete version:
+
+- 5 of the 12 planned main workflows (including WF-08 Dashboard Sync, WF-09 Data Quality and WF-10 Error Recovery) and 4 of the 7 planned sub-workflows (the 3 OpenAI agent sub-workflows are built).
+- The REST API service: it is declared in `docker-compose.yml`, but its code is not in the repository yet.
+- The remaining Grafana dashboards and the Metabase setup.
 
 ---
 
