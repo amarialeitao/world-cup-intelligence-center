@@ -1,7 +1,7 @@
 # ⚽ World Cup Intelligence Center (WCIC)
 
-> Plataforma de inteligência esportiva em tempo real para a Copa do Mundo 2026.
-> Construída com n8n como orquestrador principal, PostgreSQL, Redis e agentes GPT-4o.
+> Real-time sports intelligence platform for the 2026 FIFA World Cup.
+> Built with n8n as the main orchestrator, PostgreSQL, Redis and GPT-4o agents.
 
 [![Stack](https://img.shields.io/badge/orchestrator-n8n%20Queue%20Mode-orange)]()
 [![DB](https://img.shields.io/badge/database-PostgreSQL%2015%20+%20TimescaleDB-blue)]()
@@ -11,22 +11,22 @@
 
 ---
 
-## O que é este projeto?
+## What is this project?
 
-O WCIC não é só uma automação, ele é uma plataforma de produto com arquitetura distribuída que demonstra como sistemas de inteligência de dados são construídos em ambientes corporativos reais. 
+WCIC is more than an automation: it is a product platform with a distributed architecture that shows how data intelligence systems are built in real corporate environments.
 
-## Motivação
+## Motivation
 
-Este projeto foi desenvolvido para exercitar competências em:
+This project was built to practice:
 
-- Arquitetura de automações
-- Integração de sistemas
-- Engenharia de dados
-- Observabilidade
-- Inteligência Artificial aplicada
-- Desenvolvimento orientado a eventos
+- Automation architecture
+- Systems integration
+- Data engineering
+- Observability
+- Applied artificial intelligence
+- Event-driven development
 
-O objetivo foi simular um produto utilizado por empresas de mídia esportiva e análise de dados durante grandes eventos esportivos.
+The goal was to simulate a product used by sports media and data analytics companies during major sporting events.
 
 ```mermaid
 graph LR
@@ -47,125 +47,117 @@ C --> G
 C --> F
 ```
 
-**O que o sistema faz:**
+**What the system does:**
 
-- Coleta dados de partidas de múltiplas APIs com fallback e deduplicação
-- Monitora eventos ao vivo (gols, cartões, substituições) com latência < 2 minutos
-- Analisa notícias com agentes GPT-4o especializados e score de impacto
-- Processa sentimento através do Twitter e Reddit durante as partidas
-- Gera previsões pré-jogo com probabilidades e justificativa auditável
-- Publica relatório diário gerado automaticamente por IA
-- Expõe tudo via REST API autenticada para consumidores externos
+- Collects match data from multiple APIs with fallback and deduplication
+- Monitors live events (goals, cards, substitutions) with latency under 2 minutes
+- Analyzes news with specialized GPT-4o agents and an impact score
+- Processes Twitter and Reddit sentiment during matches
+- Generates pre-match predictions with probabilities and an auditable rationale
+- Publishes a daily report generated automatically by AI
+- Exposes everything through an authenticated REST API for external consumers
 
 ---
 
-## Arquitetura em números
+## Architecture in numbers
 
-| Componente | Quantidade |
+| Component | Count |
 |---|---|
-| Workflows n8n | 12 principais + 7 subworkflows |
-| Tabelas PostgreSQL | 15+ com índices e views materializadas |
-| Padrões Redis | Cache, Filas, Rate Limiting, Dedup, Circuit Breaker, Pub/Sub |
-| Agentes IA | 4 especializados por responsabilidade |
-| Canais de notificação | Telegram, Slack, Email, Webhooks |
-| Métricas Prometheus | 20+ métricas operacionais e de negócio |
+| n8n workflows | 12 main + 7 subworkflows |
+| PostgreSQL tables | 15+ with indexes and materialized views |
+| Redis patterns | Cache, Queues, Rate Limiting, Dedup, Circuit Breaker, Pub/Sub |
+| AI agents | 4, each with its own responsibility |
+| Notification channels | Telegram, Slack, Email, Webhooks |
+| Prometheus metrics | 20+ operational and business metrics |
 
 ---
 
 ## Quick Start
 
-### Pré-requisitos
+### Prerequisites
 
-- Docker e Docker Compose
-- Make (opcional, para comandos encurtados)
-- Credenciais das APIs externas (ver `.env.example`)
+- Docker and Docker Compose
+- Make (optional, for shorter commands)
+- Credentials for the external APIs (see `.env.example`)
 
-### 1. Clone e configure
+### 1. Clone and configure
 
 ```bash
-git clone https://github.com/marialuizaleitao/world-cup-intelligence-center.git
+git clone https://github.com/amarialeitao/world-cup-intelligence-center.git
 cd world-cup-intelligence-center
 cp .env.example .env
-# Edite .env com suas chaves de API
+# Edit .env with your API keys
 ```
 
-### 2. Suba a infraestrutura
+### 2. Start the infrastructure
 
 ```bash
 docker-compose up -d
 ```
 
-### 3. Inicialize o banco
+### 3. Initialize the database
 
 ```bash
 ./scripts/setup-database.sh
 ```
 
-### 4. Importe os workflows no n8n
+### 4. Import the workflows into n8n
 
 ```bash
 ./scripts/import-workflows.sh
 ```
 
-### 5. Verifique a conectividade das APIs
+### 5. Check the API connections
 
 ```bash
 ./scripts/test-apis.sh
 ```
 
-### Acesso aos serviços
+### Service access
 
-| Serviço | URL | Credencial |
+| Service | URL | Credentials |
 |---|---|---|
 | n8n | http://localhost:5678 | `.env N8N_BASIC_AUTH_*` |
 | Grafana | http://localhost:3000 | admin / `.env GRAFANA_ADMIN_PASSWORD` |
-| Metabase | http://localhost:3001 | configurar no primeiro acesso |
-| Prometheus | http://localhost:9090 | sem autenticação |
+| Metabase | http://localhost:3001 | set up on first access |
+| Prometheus | http://localhost:9090 | no authentication |
 | API WCIC | http://localhost:8080/api/v1 | `X-API-Key` header |
 
 ---
 
-## Estrutura do projeto
+## Project structure
 
 ```
 world-cup-intelligence-center/
 ├── n8n/
-│   ├── workflows/          # JSONs exportados do n8n
-│   ├── specs/              # Especificações legíveis dos workflows (para code review)
-│   └── subworkflows/       # Sub-workflows reutilizáveis
+│   ├── workflows/          # Workflows exported from n8n (JSON)
+│   ├── subflows/           # Reusable sub-workflows (OpenAI agents)
+│   └── specs/              # Readable specifications of each workflow (for code review)
 ├── database/
-│   ├── migrations/         # SQL versionado (executar em ordem)
-│   ├── seeds/              # Dados de referência (times, venues)
-│   ├── views/              # Materialized views
-│   └── queries/            # Queries de exemplo para dashboards
-├── services/
-│   └── api/                # API REST Node.js/Express
-├── infra/
-│   ├── monitoring/         # Configurações Prometheus + Grafana
-│   ├── backups/            # Scripts de backup e restore
-│   └── alerts/             # Definições de alertas
-├── docker/                 # Dockerfiles e configs por serviço
-├── postman/                # Coleção Postman para testes de API
-├── docs/                   # Documentação técnica e operacional
-└── scripts/                # Automação de setup e operação
+│   ├── migrations/         # Versioned SQL (run in order)
+│   └── seeds/              # Reference data (teams, venues)
+├── dashboards/
+│   └── grafana/            # Grafana dashboards
+├── docker/                 # Per-service configuration (PostgreSQL, Prometheus)
+├── docs/                   # Technical documentation and decisions
+├── scripts/                # Setup, import and test scripts
+└── docker-compose.yml
 ```
 
 ---
 
-## Documentação
+## Documentation
 
-| Documento | Descrição |
+| Document | Description |
 |---|---|
-| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Visão arquitetural completa |
-| [DECISIONS.md](./docs/DECISIONS.md) | ADRs — por que cada tecnologia foi escolhida |
-| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) | Guia de deploy em produção |
-| [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | Problemas comuns e soluções |
-| [RUNBOOK.md](./docs/RUNBOOK.md) | Procedimentos operacionais |
-| [API_REFERENCE.md](./docs/API_REFERENCE.md) | Documentação da REST API |
+| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Full architecture overview |
+| [DECISIONS.md](./docs/DECISIONS.md) | ADRs: why each technology was chosen |
+| [API_PROVIDER_DECISION.md](./docs/API_PROVIDER_DECISION.md) | How the sports data API provider was chosen |
+| [n8n/specs](./n8n/specs) | Readable specifications of each workflow |
 
 ---
 
-## Padrões Arquiteturais Utilizados
+## Architectural Patterns
 
 - Event Driven Architecture
 - Queue-Based Processing
@@ -181,19 +173,19 @@ world-cup-intelligence-center/
 
 ## Roadmap
 
-- [x] Sprint 0 — Estrutura base e documentação
-- [x] Sprint 1 — Schema do banco de dados
+- [x] Sprint 0 — Base structure and documentation
+- [x] Sprint 1 — Database schema
 - [ ] Sprint 2 — WF-01 Match Collector + WF-08 Dashboard Sync
 - [ ] Sprint 3 — WF-02 Live Events + WF-07 Notification Hub
 - [ ] Sprint 4 — WF-03 News Intelligence + WF-04 Sentiment
 - [ ] Sprint 5 — WF-05 AI Predictions + WF-11 Accuracy Tracker
-- [ ] Sprint 6 — Observabilidade completa (Grafana + Prometheus)
+- [ ] Sprint 6 — Full observability (Grafana + Prometheus)
 
 ---
 
-## Objetivos de Performance
+## Performance Targets
 
-| Métrica | Meta |
+| Metric | Target |
 |----------|----------|
 | Event Processing Latency | < 2 min |
 | Prediction Generation | < 15s |
@@ -203,13 +195,17 @@ world-cup-intelligence-center/
 
 ---
 
-## Competências técnicas demonstradas
+## Technical Skills Demonstrated
 
-- Orquestração de workflows com n8n em Queue Mode (escala horizontal)
-- Arquitetura de integração com múltiplas APIs e fallback automático
-- Design de schema relacional para dados de séries temporais
-- Padrões de resiliência: Circuit Breaker, Dead-letter Queue, Retry com backoff
-- Prompt engineering para agentes IA com outputs estruturados e auditáveis
-- Observabilidade com Prometheus e Grafana em ambiente distribuído
-- Segurança: validação de webhooks, rate limiting, gerenciamento de secrets
-- Containerização de stack completa com Docker Compose
+- Workflow orchestration with n8n in Queue Mode (horizontal scaling)
+- Integration architecture with multiple APIs and automatic fallback
+- Relational schema design for time-series data
+- Resilience patterns: Circuit Breaker, Dead-letter Queue, Retry with backoff
+- Prompt engineering for AI agents with structured, auditable outputs
+- Observability with Prometheus and Grafana in a distributed environment
+- Security: webhook validation, rate limiting, secrets management
+- Containerization of the full stack with Docker Compose
+
+## License
+
+[MIT](LICENSE)
