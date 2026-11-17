@@ -8,6 +8,9 @@
 [![Cache](https://img.shields.io/badge/cache-Redis%207-red)]()
 [![AI](https://img.shields.io/badge/AI-GPT--4o%20Agents-green)]()
 [![Infra](https://img.shields.io/badge/infra-Docker%20Compose-blue)]()
+[![Status](https://img.shields.io/badge/status-work%20in%20progress-yellow)]()
+
+> 🚧 **Work in progress.** The architecture, database schema and workflow specifications are in place, and the workflows are being implemented and tested sprint by sprint. See the [roadmap](#roadmap) for the current status.
 
 ---
 
@@ -47,7 +50,7 @@ C --> G
 C --> F
 ```
 
-**What the system does:**
+**What the system is designed to do:**
 
 - Collects match data from multiple APIs with fallback and deduplication
 - Monitors live events (goals, cards, substitutions) with latency under 2 minutes
