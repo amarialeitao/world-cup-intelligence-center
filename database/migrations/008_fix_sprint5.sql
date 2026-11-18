@@ -135,12 +135,12 @@ COMMENT ON INDEX idx_predictions_match_type
 -- Índice para WF-05 identificar partidas elegíveis (status=scheduled, próximas 2h)
 CREATE INDEX IF NOT EXISTS idx_matches_upcoming_predictions
     ON matches (scheduled_at ASC, status)
-    WHERE status = 'scheduled'
-      AND scheduled_at > NOW();
+    WHERE status = 'scheduled';
 
 COMMENT ON INDEX idx_matches_upcoming_predictions
     IS 'WF-05: busca partidas scheduled nas próximas horas para geração de previsão. '
-       'Partial index em status=scheduled reduz tamanho - partidas passadas excluídas automaticamente.';
+       'Partial index em status=scheduled: partidas encerradas saem do índice quando mudam de status. '
+       'NOW() não pode ser usado no predicado de um índice (função não IMMUTABLE).';
 
 -- =============================================================================
 -- [P7] matches: referee_country (feature leve para predictor)

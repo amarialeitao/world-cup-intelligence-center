@@ -83,8 +83,75 @@ COMMENT ON INDEX idx_matches_last_sync
 -- ALTER TYPE é seguro — apenas aumenta o limite, não altera dados existentes.
 -- =============================================================================
 
+-- mv_group_standings depende de group_name, e o PostgreSQL não altera o tipo
+-- de uma coluna usada por uma view. A view é removida e recriada com a mesma
+-- definição da 003_views.sql.
+DROP MATERIALIZED VIEW IF EXISTS mv_group_standings;
+
 ALTER TABLE teams
     ALTER COLUMN group_name TYPE VARCHAR(10);
+
+CREATE MATERIALIZED VIEW mv_group_standings AS
+WITH team_results AS (
+    SELECT
+        t.id AS team_id,
+        t.name AS team_name,
+        t.short_name,
+        t.country_code,
+        t.group_name,
+        t.logo_url,
+        -- Uma linha por partida finalizada
+        m.id AS match_id,
+        CASE
+            WHEN m.home_team_id = t.id THEN 'home'
+            ELSE 'away'
+        END AS side,
+        CASE
+            WHEN m.home_team_id = t.id THEN m.home_score
+            ELSE m.away_score
+        END AS goals_for,
+        CASE
+            WHEN m.home_team_id = t.id THEN m.away_score
+            ELSE m.home_score
+        END AS goals_against,
+        CASE
+            WHEN m.winner_team_id = t.id THEN 'W'
+            WHEN m.status = 'finished' AND m.winner_team_id IS NULL THEN 'D'
+            WHEN m.status = 'finished' AND m.winner_team_id != t.id THEN 'L'
+            ELSE NULL
+        END AS result
+    FROM teams t
+    LEFT JOIN matches m ON (m.home_team_id = t.id OR m.away_team_id = t.id)
+        AND m.status = 'finished'
+        AND m.stage::text LIKE 'group_%'
+    WHERE t.group_name IS NOT NULL
+)
+SELECT
+    team_id,
+    team_name,
+    short_name,
+    country_code,
+    group_name,
+    logo_url,
+    COUNT(match_id) AS played,
+    COUNT(CASE WHEN result = 'W' THEN 1 END) AS won,
+    COUNT(CASE WHEN result = 'D' THEN 1 END) AS drawn,
+    COUNT(CASE WHEN result = 'L' THEN 1 END) AS lost,
+    COALESCE(SUM(goals_for), 0) AS goals_for,
+    COALESCE(SUM(goals_against), 0) AS goals_against,
+    COALESCE(SUM(goals_for), 0) - COALESCE(SUM(goals_against), 0) AS goal_difference,
+    (COUNT(CASE WHEN result = 'W' THEN 1 END) * 3) +
+    COUNT(CASE WHEN result = 'D' THEN 1 END) AS points,
+    NOW() AS last_refreshed_at
+FROM team_results
+GROUP BY team_id, team_name, short_name, country_code, group_name, logo_url
+ORDER BY group_name, points DESC, goal_difference DESC, goals_for DESC;
+
+CREATE UNIQUE INDEX ON mv_group_standings(team_id);
+CREATE INDEX ON mv_group_standings(group_name, points DESC);
+
+COMMENT ON MATERIALIZED VIEW mv_group_standings
+    IS 'Tabela de classificação por grupo. Refresh via WF-08.';
 
 COMMENT ON COLUMN teams.group_name
     IS 'Grupo na fase de grupos (A-L para Copa 2026). '

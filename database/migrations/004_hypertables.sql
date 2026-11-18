@@ -30,6 +30,12 @@ CREATE INDEX IF NOT EXISTS idx_match_events_chunk_match
 
 -- Política de compressão: comprime chunks com mais de 7 dias
 -- Reduz armazenamento em 90%+ para dados históricos
+-- A compressão precisa estar habilitada antes de criar a política
+ALTER TABLE match_events
+    SET (
+        timescaledb.compress = true
+    );
+
 SELECT add_compression_policy('match_events', INTERVAL '7 days');
 
 -- Política de retenção: remove dados com mais de 1 ano
@@ -53,6 +59,14 @@ CREATE INDEX IF NOT EXISTS idx_sentiment_chunk_entity
     ON sentiment_snapshots(captured_at DESC, entity_type, entity_id);
 
 -- Comprime após 3 dias (dados mudam muito — comprimir logo)
+-- A compressão precisa estar habilitada antes de criar a política
+ALTER TABLE sentiment_snapshots
+    SET (
+        timescaledb.compress = true,
+        timescaledb.compress_segmentby = 'entity_type, entity_id',
+        timescaledb.compress_orderby = 'captured_at DESC'
+    );
+
 SELECT add_compression_policy('sentiment_snapshots', INTERVAL '3 days');
 
 -- Retém por 6 meses (suficiente para análises pós-Copa)
@@ -75,6 +89,14 @@ CREATE INDEX IF NOT EXISTS idx_workflow_logs_chunk_name
     ON workflow_logs(started_at DESC, workflow_name, status);
 
 -- Comprime após 14 dias
+-- A compressão precisa estar habilitada antes de criar a política
+ALTER TABLE workflow_logs
+    SET (
+        timescaledb.compress = true,
+        timescaledb.compress_segmentby = 'workflow_name',
+        timescaledb.compress_orderby = 'started_at DESC'
+    );
+
 SELECT add_compression_policy('workflow_logs', INTERVAL '14 days');
 
 -- Retém por 90 dias (suficiente para debugging e auditoria)
@@ -102,15 +124,16 @@ FROM sentiment_snapshots
 GROUP BY time_bucket('1 hour', captured_at), entity_type, entity_id, source
 WITH NO DATA;
 
--- Política de refresh: atualiza a cada 30 minutos, cobre última 1 hora
+-- Política de refresh: atualiza a cada 30 minutos. A janela (3h a 30min atrás)
+-- precisa cobrir ao menos dois buckets de 1 hora, exigência do TimescaleDB.
 SELECT add_continuous_aggregate_policy(
     'sentiment_hourly',
-    start_offset => INTERVAL '2 hours',
+    start_offset => INTERVAL '3 hours',
     end_offset => INTERVAL '30 minutes',
     schedule_interval => INTERVAL '30 minutes'
 );
 
-COMMENT ON MATERIALIZED VIEW sentiment_hourly
+COMMENT ON VIEW sentiment_hourly
     IS 'Agregação horária de sentimento. TimescaleDB Continuous Aggregate — não fazer refresh manual.';
 
 -- Performance de workflows por hora (Grafana)
@@ -130,7 +153,7 @@ WITH NO DATA;
 
 SELECT add_continuous_aggregate_policy(
     'workflow_performance_hourly',
-    start_offset => INTERVAL '2 hours',
+    start_offset => INTERVAL '3 hours',
     end_offset => INTERVAL '30 minutes',
     schedule_interval => INTERVAL '30 minutes'
 );

@@ -19,7 +19,7 @@
 -- Usado por: n8n, n8n-worker-1, n8n-worker-2
 -- ---------------------------------------------------------------------------
 CREATE USER n8n_app WITH PASSWORD '${POSTGRES_N8N_PASSWORD}';
-CREATE DATABASE n8n OWNER n8n_app ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
+CREATE DATABASE n8n OWNER n8n_app TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
 
 GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n_app;
 
@@ -29,7 +29,7 @@ GRANT ALL PRIVILEGES ON DATABASE n8n TO n8n_app;
 --            n8n acessa via credencial configurada internamente no n8n
 -- ---------------------------------------------------------------------------
 CREATE USER wcic_app WITH PASSWORD '${POSTGRES_WCIC_PASSWORD}';
-CREATE DATABASE wcic OWNER wcic_app ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
+CREATE DATABASE wcic OWNER wcic_app TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
 
 GRANT ALL PRIVILEGES ON DATABASE wcic TO wcic_app;
 
@@ -38,7 +38,7 @@ GRANT ALL PRIVILEGES ON DATABASE wcic TO wcic_app;
 -- Usado por: serviço metabase para armazenar dashboards e configurações
 -- ---------------------------------------------------------------------------
 CREATE USER metabase_app WITH PASSWORD '${POSTGRES_METABASE_PASSWORD}';
-CREATE DATABASE metabase OWNER metabase_app ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
+CREATE DATABASE metabase OWNER metabase_app TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
 
 GRANT ALL PRIVILEGES ON DATABASE metabase TO metabase_app;
 
@@ -47,7 +47,7 @@ GRANT ALL PRIVILEGES ON DATABASE metabase TO metabase_app;
 -- Usado por: serviço grafana para armazenar dashboards e alertas
 -- ---------------------------------------------------------------------------
 CREATE USER grafana_app WITH PASSWORD '${POSTGRES_GRAFANA_PASSWORD}';
-CREATE DATABASE grafana OWNER grafana_app ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
+CREATE DATABASE grafana OWNER grafana_app TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE 'en_US.UTF-8' LC_CTYPE 'en_US.UTF-8';
 
 GRANT ALL PRIVILEGES ON DATABASE grafana TO grafana_app;
 
