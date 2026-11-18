@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC — scripts/setup-database.sh
 #
@@ -232,12 +233,11 @@ fi
 if [[ "$SKIP_MIGRATIONS" == "false" ]]; then
   log_step "Executando migrations (database: wcic)"
 
-  MIGRATIONS=(
-    "001_initial_schema.sql"
-    "002_indexes.sql"
-    "003_views.sql"
-    "004_hypertables.sql"
-  )
+  # Todas as migrations do diretório, em ordem numérica (001, 002, ...)
+  MIGRATIONS=()
+  for path in "${MIGRATIONS_DIR}"/*.sql; do
+    MIGRATIONS+=("$(basename "$path")")
+  done
 
   for migration in "${MIGRATIONS[@]}"; do
     migration_file="${MIGRATIONS_DIR}/${migration}"
@@ -286,10 +286,10 @@ fi
 if [[ "$SKIP_SEEDS" == "false" ]]; then
   log_step "Executando seeds (database: wcic)"
 
-  SEEDS=(
-    "001_teams.sql"
-    "002_venues.sql"
-  )
+  SEEDS=()
+  for path in "${SEEDS_DIR}"/*.sql; do
+    SEEDS+=("$(basename "$path")")
+  done
 
   for seed in "${SEEDS[@]}"; do
     seed_file="${SEEDS_DIR}/${seed}"
