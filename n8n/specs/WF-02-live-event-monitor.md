@@ -301,6 +301,3 @@ LIMIT 10;
 - Nenhuma duplicata em `match_events` após 100 execuções consecutivas com a mesma partida
 - WF-07 acionado para 100% dos `goal` e `red_card` events inseridos
 - `workflow_logs` registra 100% das execuções (mesmo as de "no active matches")
-EOF
-echo "WF-02 spec ok"
-Saída

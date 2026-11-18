@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC - scripts/test-prediction-engine.sh
 # Valida o pipeline completo de AI Prediction Engine (WF-05 + SWF Match Predictor)
@@ -371,6 +372,3 @@ else
   echo "   \033[32mStatus: APROVADO - pipeline de previsões operacional\033[0m"
   exit 0
 fi
-SHEOF
-chmod +x /home/claude/wcic/scripts/test-prediction-engine.sh
-bash -n /home/claude/wcic/scripts/test-prediction-engine.sh && echo "sintaxe ok"

@@ -175,5 +175,3 @@ Para limpar após os testes:
 DELETE FROM wcic.match_events WHERE raw_payload->>'test' = 'true';
 DELETE FROM wcic.notifications WHERE metadata->>'test' = 'true';
 ```
-EOF
-echo "test-live-events.md ok"

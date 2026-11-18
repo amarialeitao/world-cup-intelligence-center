@@ -352,5 +352,3 @@ redis-cli -a $REDIS_PASSWORD LPOP wcic:queue:dlq:wf07
 - `wcic.notifications` contém registro de cada tentativa (enviada ou não)
 - Rate limiting bloqueia corretamente a segunda chamada para o mesmo `(channel, correlation_id)` em < 60s
 - DLQ vazia ou crescendo < 5 itens/hora em operação normal
-EOF
-echo "WF-07 spec ok"

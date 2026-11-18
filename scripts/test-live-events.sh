@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC — scripts/test-live-events.sh
 # Testa o pipeline completo de eventos ao vivo sem precisar de um jogo real.
@@ -413,6 +414,3 @@ else
   echo ""
   exit 0
 fi
-SHEOF
-chmod +x /home/claude/wcic/scripts/test-live-events.sh
-bash -n /home/claude/wcic/scripts/test-live-events.sh && echo "sintaxe ok"

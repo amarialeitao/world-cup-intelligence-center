@@ -287,5 +287,3 @@ FROM wcic.matches;
 - `workflow_logs` registra cada execução com `status = 'success'`
 - `wcic:active_matches` contém apenas IDs de partidas com status `live` ou `halftime`
 - Duas execuções consecutivas não criam duplicatas (`SELECT external_id, COUNT(*) GROUP BY 1 HAVING COUNT(*) > 1` retorna vazio)
-EOF
-echo "WF-01 spec ok"

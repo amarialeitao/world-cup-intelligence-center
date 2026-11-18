@@ -171,5 +171,3 @@ docker-compose down -v       # Remove todos os volumes
 docker-compose up -d postgres
 ./scripts/setup-database.sh
 ```
-EOF
-echo "setup-database.md ok"

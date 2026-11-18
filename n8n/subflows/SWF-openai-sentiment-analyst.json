@@ -89,5 +89,3 @@
   "updatedAt": "2025-06-01T00:00:00.000Z",
   "versionId": "swf-sentiment-analyst-v1-0-0"
 }
-JSONEOF
-python3 -c "import json; d=json.load(open('/home/claude/wcic/n8n/subworkflows/SWF-openai-sentiment-analyst.json')); print(f'SWF Sentiment Analyst: {len(d[\"nodes\"])} nodes - JSON válido')"

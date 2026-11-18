@@ -349,5 +349,3 @@
   "updatedAt": "2025-06-01T00:00:00.000Z",
   "versionId": "wf05-v1-0-0"
 }
-JSONEOF
-python3 -c "import json; d=json.load(open('/home/claude/wcic/n8n/workflows/WF-05-ai-prediction-engine.json')); print(f'WF-05: {len(d[\"nodes\"])} nodes, {len(d[\"connections\"])} connections - JSON válido')"

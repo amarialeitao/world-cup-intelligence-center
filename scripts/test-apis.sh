@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC - scripts/test-apis.sh
 #
@@ -459,6 +460,3 @@ else
   echo ""
   exit 0
 fi
-SHEOF
-chmod +x /home/claude/wcic/scripts/test-apis.sh
-bash -n /home/claude/wcic/scripts/test-apis.sh && echo "sintaxe ok"

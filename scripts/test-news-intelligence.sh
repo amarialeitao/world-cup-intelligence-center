@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC - scripts/test-news-intelligence.sh
 # Valida o pipeline completo de News Intelligence (WF-03 + SWF News Analyst)
@@ -359,6 +360,3 @@ else
   echo "   \033[32mStatus: APROVADO - pipeline News Intelligence operacional\033[0m"
   exit 0
 fi
-SHEOF
-chmod +x /home/claude/wcic/scripts/test-news-intelligence.sh
-bash -n /home/claude/wcic/scripts/test-news-intelligence.sh && echo "sintaxe ok"

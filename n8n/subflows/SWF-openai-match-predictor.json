@@ -86,5 +86,3 @@
   "updatedAt": "2025-06-01T00:00:00.000Z",
   "versionId": "swf-match-predictor-v1-0-0"
 }
-JSONEOF
-python3 -c "import json; d=json.load(open('/home/claude/wcic/n8n/subworkflows/SWF-openai-match-predictor.json')); print(f'SWF Match Predictor: {len(d[\"nodes\"])} nodes - JSON válido')"

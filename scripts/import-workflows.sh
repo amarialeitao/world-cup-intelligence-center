@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC - scripts/import-workflows.sh
 #
@@ -295,6 +296,3 @@ if [[ "$DRY_RUN" == "false" && $((IMPORTED + UPDATED)) -gt 0 ]]; then
   log_warn "Ou use a API:"
   log_warn "  curl -X PATCH -u admin:PASS ${N8N_API_URL}/workflows/{id}/activate"
 fi
-SHEOF
-chmod +x /home/claude/wcic/scripts/import-workflows.sh
-bash -n /home/claude/wcic/scripts/import-workflows.sh && echo "sintaxe ok"

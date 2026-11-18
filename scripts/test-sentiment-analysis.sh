@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # =============================================================================
 # WCIC - scripts/test-sentiment-analysis.sh
 # Valida o pipeline completo de Sentiment Analysis (WF-04 + SWF Sentiment Analyst)
@@ -361,6 +362,3 @@ else
   echo "   \033[32mStatus: APROVADO - pipeline Sentiment Analysis operacional\033[0m"
   exit 0
 fi
-SHEOF
-chmod +x /home/claude/wcic/scripts/test-sentiment-analysis.sh
-bash -n /home/claude/wcic/scripts/test-sentiment-analysis.sh && echo "sintaxe ok"
