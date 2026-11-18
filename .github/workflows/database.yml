@@ -1,0 +1,38 @@
+name: Database
+
+# Cria o banco do zero (init, migrations 001-008 e seeds) num TimescaleDB vazio.
+# Por enquanto roda só manualmente (Actions > Database > Run workflow): a 005
+# ainda falha porque o índice único de match_events não inclui a coluna de
+# particionamento da hypertable. Quando isso for resolvido, adicionar
+# "push: branches: [main]" e "pull_request:" abaixo.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  database:
+    name: Database from scratch
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Init, migrations 001-008 and seeds
+        run: ./scripts/test-migrations.sh

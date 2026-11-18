@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    name: Workflows, dashboards and scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: n8n workflows and Grafana dashboards are valid JSON
+        run: |
+          for f in n8n/workflows/*.json n8n/subflows/*.json dashboards/grafana/*.json; do
+            jq empty "$f" && echo "ok  $f"
+          done
+      - name: Every n8n workflow has a name and nodes
+        run: |
+          for f in n8n/workflows/*.json n8n/subflows/*.json; do
+            jq -e '(.name | type == "string") and (.nodes | length > 0)' "$f" > /dev/null \
+              || { echo "invalid workflow: $f"; exit 1; }
+          done
+      - name: Shell scripts parse
+        run: for f in scripts/*.sh; do bash -n "$f" && echo "ok  $f"; done
+      - name: Docker Compose file is valid
+        run: cp .env.example .env && docker compose config --quiet
