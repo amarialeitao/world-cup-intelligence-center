@@ -3,6 +3,7 @@
 > Real-time sports intelligence platform for the 2026 FIFA World Cup.
 > Built with n8n as the main orchestrator, PostgreSQL, Redis and GPT-4o agents.
 
+[![CI](https://github.com/amarialeitao/world-cup-intelligence-center/actions/workflows/ci.yml/badge.svg)](https://github.com/amarialeitao/world-cup-intelligence-center/actions/workflows/ci.yml)
 [![Stack](https://img.shields.io/badge/orchestrator-n8n%20Queue%20Mode-orange)]()
 [![DB](https://img.shields.io/badge/database-PostgreSQL%2015%20+%20TimescaleDB-blue)]()
 [![Cache](https://img.shields.io/badge/cache-Redis%207-red)]()
@@ -197,6 +198,13 @@ Still missing for a first complete version:
 - 5 of the 12 planned main workflows (including WF-08 Dashboard Sync, WF-09 Data Quality and WF-10 Error Recovery) and 4 of the 7 planned sub-workflows (the 3 OpenAI agent sub-workflows are built).
 - The REST API service: it is declared in `docker-compose.yml`, but its code is not in the repository yet.
 - The remaining Grafana dashboards and the Metabase setup.
+
+Known issue: on a fresh database, migration `005` cannot create the unique index on `match_events (match_id, external_id)`, because TimescaleDB requires every unique index on a hypertable to include the partitioning column (`created_at`). WF-02 relies on that index for `ON CONFLICT DO NOTHING`, so event deduplication needs a different design before the live event pipeline is complete.
+
+## Continuous integration
+
+- **[CI](.github/workflows/ci.yml)**, on every push: checks that every n8n workflow and Grafana dashboard is valid JSON, that each workflow has a name and nodes, that the shell scripts parse, and that `docker-compose.yml` is valid.
+- **[Database](.github/workflows/database.yml)**, run manually for now: starts an empty PostgreSQL 15 + TimescaleDB and runs `scripts/test-migrations.sh`, which applies the init, all migrations in order and the seeds, then checks tables, views, hypertables and seed data. It will run on every push once the known issue above is fixed.
 
 ---
 
